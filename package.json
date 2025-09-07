@@ -1,0 +1,16 @@
+{
+  "name": "devtinder_backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+   "dev": "nodemon src/app.js"
+
+  },
+  "author": "yasika",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "expres": "^0.0.5",
+    "express": "^5.1.0"
+  }
+}
