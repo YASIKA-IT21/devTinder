@@ -38,6 +38,28 @@ app.delete('/delete',async(req,res)=>{
         res.json({message:"Internal server error",error:err.message});
     }
 })
+app.patch('/update/:userId',async(req,res)=>{
+    const userId = req.params?.userId;
+    const data = req.body;
+    const ALLOWED_UPDATES=['userId','about','photoUrl','age','skills'];
+    const isupdateAllowed =Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
+    if(!isupdateAllowed){
+        return res.status(400).json({message:"Invalid updates"});
+    }
+    if(data?.skills.length>5){
+        throw new Error("Skills cannot be more than 5");
+    }
+    try{
+        const updateduser =await user.findByIdAndUpdate({_id:userId},data,{
+            returnDocument:'after',
+            runValidators:true
+        });
+        console.log (updateduser);
+        res.status(200).json({message:"User updated successfully",user:user});
+    }catch(err){
+        res.status(500).json({message:"Internal server error",error:err.message});
+    }
+})
 const PORT = process.env.PORT || 3000;
 database().then(()=>
     {console.log("Database connected");app.listen(PORT,()=>{

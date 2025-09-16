@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 const userSchema = mongoose.Schema({
     firstName:{
         type:String,
@@ -9,20 +10,45 @@ const userSchema = mongoose.Schema({
 
     lastName:{
         type:String,
-    },
-
-    email:{
-        type:String,
         required:true,
-        unique:true,
-        lowercase:true
-        
-    }, 
-
-    password:{
-        type:String,
-        required:true
+        minLength:3,
+        maxLength:30
     },
+
+    email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    validate(value){
+        if(validator.isEmail)
+        {
+            throw new Error("Email is not valid");  
+        }
+    }
+    // validate(value) {
+    //     if (!value.endsWith('@gmail.com')) {
+    //         throw new Error("Email must be a gmail.com address");
+    //     }
+    // }
+},
+
+    password: {
+    type: String,
+    required: true,
+    minLength: 8,
+    maxLength: 15,
+    validate(value) {
+        if (
+            !/[a-z]/.test(value) ||      // no lowercase
+            !/[A-Z]/.test(value) ||      // no uppercase
+            !/\d/.test(value)    ||      // no number
+            !/[\W_]/.test(value)         // no special character
+        ) {
+            throw new Error("Password must contain lowercase, uppercase, number, and special character");
+        }
+    }
+},
 
     age:{
         type:Number,
@@ -39,6 +65,12 @@ const userSchema = mongoose.Schema({
     },
     photoUrl:{
         type:String,
+        validate(value){
+        if(validator.isURL(value))
+        {
+            throw new Error("Email is not valid");  
+        }
+    },  
         default:"https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-gender-neutral-silhouette-profile-picture-suitable-social-media-profiles-icons-screensavers-as-templatex9xa_719432-2210.jpg?semt=ais_incoming&w=740&q=80"
 
     },
@@ -46,6 +78,14 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"This is a default value"
     },
+    skills:{
+        type:[String],
+        validate(value){
+            if(value.length>5){
+                throw new Error("Skills cannot be more than 5");
+            }
+        }
+    }
 
 
 },{
