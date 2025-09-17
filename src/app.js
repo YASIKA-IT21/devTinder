@@ -2,16 +2,24 @@ const express = require('express');
 const database=require('./config/database.js');
 const user = require('./models/user.js')
 const app = express();
+const bcrypt = require('bcrypt');
+const{uservalidation}=require('./utils/validate.js');
 app.use(express.json());
 app.post('/user',async(req,res)=>{
     try{
-        const obj = req.body;
-        const newuser = new user(obj)
+
+        uservalidation(req);
+        const {firstName,lastName,email,password} = req.body;
+        const passwordHash = await bcrypt.hash(password,10);
+
+        const newuser = new user({
+            firstName,lastName,email,password:passwordHash
+        })
         await newuser.save();
         console.log(newuser);
         res.status(201).json({message:"User created successfully",user:newuser});
     }catch(err){
-        res.status(500).json({message:"Internal server error",error:err.message});
+        res.status(500).json({message:"Check the user credentials",error:err.message});
     }
 })
 //FEED API=to get all users from the database

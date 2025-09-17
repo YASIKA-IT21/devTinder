@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     unique: true,
     lowercase: true,
     validate(value){
-        if(validator.isEmail)
+        if(!validator.isEmail)
         {
             throw new Error("Email is not valid");  
         }
@@ -37,17 +37,8 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     minLength: 8,
-    maxLength: 15,
-    validate(value) {
-        if (
-            !/[a-z]/.test(value) ||      // no lowercase
-            !/[A-Z]/.test(value) ||      // no uppercase
-            !/\d/.test(value)    ||      // no number
-            !/[\W_]/.test(value)         // no special character
-        ) {
-            throw new Error("Password must contain lowercase, uppercase, number, and special character");
-        }
-    }
+    
+    
 },
 
     age:{
@@ -65,10 +56,11 @@ const userSchema = mongoose.Schema({
     },
     photoUrl:{
         type:String,
+        
         validate(value){
-        if(validator.isURL(value))
+        if(!validator.isURL(value))
         {
-            throw new Error("Email is not valid");  
+            throw new Error("Photo URL is not valid");  
         }
     },  
         default:"https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-gender-neutral-silhouette-profile-picture-suitable-social-media-profiles-icons-screensavers-as-templatex9xa_719432-2210.jpg?semt=ais_incoming&w=740&q=80"
