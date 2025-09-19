@@ -1,10 +1,14 @@
 const express = require('express');
 const database=require('./config/database.js');
 const user = require('./models/user.js')
+const userAuth=require('./middleware/Auth.js')
 const app = express();
+const cookie=require('cookie-parser');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const{uservalidation}=require('./utils/validate.js');
 app.use(express.json());
+app.use(cookie())
 app.post('/user',async(req,res)=>{
     try{
 
@@ -22,20 +26,38 @@ app.post('/user',async(req,res)=>{
         res.status(500).json({message:"Check the user credentials",error:err.message});
     }
 })
-//FEED API=to get all users from the database
-app.get('/feed',async(req,res)=>{
-    const email = req.body.email;
-      
+app.post('/login',async(req,res)=>{
+    const{email,password}=req.body;
     try{
-      
-        const  users=   await user.findOne({email:email});
-        res.send(users);
+        const presentuser = await user.findOne({email:email})
+        if(!presentuser){
+            return res.status(400).json({message:"User not found"});
+        }
+        const passwordcompare = await bcrypt.compare(password,presentuser.password);
+        if(!passwordcompare){
+            return res.status(400).json({message:"Invalid credentials"});
+        }
+        const token = await presentuser.getJWT();
+        console.log(token)
+        res.cookie("token",token);
+        res.status(200).json({message:"Login successful"});
+    }catch(err){
+        res.status(500).json({message:"Internal server error",error:err.message});
+    }
+})
+app.get('/profile',userAuth,async(req,res)=>{
+    try{
         
-
+    const presentuser = req.user;
+    res.status(200).json({message:"User profile fetched successfully",user:presentuser});
+    }catch(err){
+        res.status(500).json({message:"Internal server error",error:err.message});
     }
-    catch(err){
-        res.status(400).json({message:"Error fetching users"});
-    }
+    
+})
+//FEED API=to get all users from the database
+app.get('/sendconnection',userAuth,async(req,res)=>{
+    res.send("connection made");
 })
 app.delete('/delete',async(req,res)=>{
     const userid = req.body.userid;
