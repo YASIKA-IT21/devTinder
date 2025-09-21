@@ -54,7 +54,7 @@ userRouter.get('/user/feed',userAuth,async(req,res)=>{
     try{
         const loggeduser = req.user;
         const loggeduserid=req.user._id;
-        const page=parseInt(req.query.page) || 1;
+        const page=parseInt(req.query.page) || 1; //pagintion
         let limit = parseInt(req.query.limit) || 10;
         limit =limit>50?50:limit;
         const skip = (page - 1) * limit;//formula to skip documents for pagination
