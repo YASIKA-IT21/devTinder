@@ -4,12 +4,14 @@ const app = express();
 const authRouter=require('./routes/Auth.js');
 const profileRouter=require('./routes/profile.js');
 const connectRequestRouter=require('./routes/connectionRequest.js');
+const userRouter=require('./routes/userRoute.js');
 const cookie=require('cookie-parser');
 app.use(express.json());
 app.use(cookie())
 app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',connectRequestRouter)
+app.use('/',userRouter);
 
 
 
