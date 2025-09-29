@@ -69,7 +69,12 @@ const userSchema = mongoose.Schema({
     },
     about:{
         type:String,
-        default:"This is a default value"
+        default:"This is a default value",
+        validate(value){
+            if(value.length>30){
+                throw new Error("About should be less than 30 letters");  
+            }
+        }
     },
     skills:{
         type:[String],

@@ -34,7 +34,7 @@ authRouter.post('/login',async(req,res)=>{
         const token = await presentuser.getJWT();
         console.log(token)
         res.cookie("token",token);
-        res.status(200).json({message:"Login successful"});
+        res.status(200).json({message:"Login successful",data:presentuser});
     }catch(err){
         res.status(500).json({message:"Internal server error",error:err.message});
     }
